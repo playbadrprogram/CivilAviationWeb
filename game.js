@@ -19,13 +19,15 @@ window.innerWidth,
 window.innerHeight
 );
 
+renderer.shadowMap.enabled = true;
+
 document.body.appendChild(
 renderer.domElement
 );
 
 const sun = new THREE.DirectionalLight(
 0xffffff,
-1
+1.2
 );
 
 sun.position.set(
@@ -33,6 +35,8 @@ sun.position.set(
 200,
 100
 );
+
+sun.castShadow = true;
 
 scene.add(sun);
 
@@ -54,6 +58,7 @@ color: 0x2e7d32
 );
 
 ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
 
 scene.add(ground);
 
@@ -69,6 +74,7 @@ color: 0x333333
 );
 
 runway.position.y = 0.05;
+runway.receiveShadow = true;
 
 scene.add(runway);
 
@@ -94,213 +100,125 @@ for(let i = -280; i <= 280; i += 30)
     scene.add(mark);
 }
 
-// دالة لبناء طائرة واقعية وحقيقية
-function createRealisticAircraft() {
+function createAircraft()
+{
     const aircraft = new THREE.Group();
 
-    // الجسم الرئيسي (Fuselage) - أسطواني الشكل أطول وأنحف
-    const fuselageGeometry = new THREE.CylinderGeometry(0.35, 0.35, 18, 16, 8);
-    const fuselageMaterial = new THREE.MeshStandardMaterial({
-        color: 0xf0f0f0,
-        metalness: 0.4,
-        roughness: 0.3
-    });
-    const fuselage = new THREE.Mesh(fuselageGeometry, fuselageMaterial);
-    fuselage.rotation.z = Math.PI / 2;
-    aircraft.add(fuselage);
+    const body = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+            0.35,
+            0.35,
+            18,
+            16
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xf0f0f0
+        })
+    );
 
-    // مقدمة الطائرة (Nose Cone) - مخروطي الشكل
-    const noseGeometry = new THREE.ConeGeometry(0.35, 2, 16);
-    const noseMaterial = new THREE.MeshStandardMaterial({
-        color: 0xcccccc,
-        metalness: 0.5,
-        roughness: 0.3
-    });
-    const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+    body.rotation.z = Math.PI / 2;
+    body.castShadow = true;
+
+    aircraft.add(body);
+
+    const nose = new THREE.Mesh(
+        new THREE.ConeGeometry(
+            0.35,
+            2,
+            16
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xcccccc
+        })
+    );
+
     nose.rotation.z = -Math.PI / 2;
     nose.position.x = 10;
+
     aircraft.add(nose);
 
-    // نوافذ الطائرة (Windows) - أكثر عدداً وتفصيلاً
-    for (let i = -3; i <= 3; i++) {
-        const windowGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.05, 16);
-        const windowMaterial = new THREE.MeshStandardMaterial({
-            color: 0x4da6ff,
-            metalness: 0.9,
-            roughness: 0.05
-        });
-        const window = new THREE.Mesh(windowGeometry, windowMaterial);
-        window.rotation.z = Math.PI / 2;
-        window.position.set(i * 1.5, 0.4, 0);
-        aircraft.add(window);
-    }
+    const wing = new THREE.Mesh(
+        new THREE.BoxGeometry(
+            20,
+            0.3,
+            3
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xe0e0e0
+        })
+    );
 
-    // الأجنحة الرئيسية (Main Wings) - أطول وأعرض
-    const wingGeometry = new THREE.BoxGeometry(20, 0.3, 3.5);
-    const wingMaterial = new THREE.MeshStandardMaterial({
-        color: 0xe8e8e8,
-        metalness: 0.25,
-        roughness: 0.4
-    });
-    const wing = new THREE.Mesh(wingGeometry, wingMaterial);
-    wing.position.y = 0.25;
     aircraft.add(wing);
 
-    // محركات الطائرة (Engines) - تحت الأجنحة - أكبر حجماً
-    const engineGeometry = new THREE.CylinderGeometry(0.45, 0.45, 2.5, 16, 8);
-    const engineMaterial = new THREE.MeshStandardMaterial({
-        color: 0x404040,
-        metalness: 0.7,
-        roughness: 0.5
-    });
-    
-    const leftEngine = new THREE.Mesh(engineGeometry, engineMaterial);
-    leftEngine.rotation.z = Math.PI / 2;
-    leftEngine.position.set(-6, -0.6, 0);
-    aircraft.add(leftEngine);
+    const tailWing = new THREE.Mesh(
+        new THREE.BoxGeometry(
+            7,
+            0.25,
+            2
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xd0d0d0
+        })
+    );
 
-    const rightEngine = new THREE.Mesh(engineGeometry, engineMaterial);
-    rightEngine.rotation.z = Math.PI / 2;
-    rightEngine.position.set(6, -0.6, 0);
-    aircraft.add(rightEngine);
+    tailWing.position.z = -8;
 
-    // مراوح المحركات (Propellers)
-    const propellerGeometry = new THREE.BoxGeometry(3, 0.15, 0.15);
-    const propellerMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1a1a1a,
-        metalness: 0.6,
-        roughness: 0.5
-    });
-
-    const leftPropeller = new THREE.Mesh(propellerGeometry, propellerMaterial);
-    leftPropeller.position.set(-6, -0.6, 0);
-    leftPropeller.rotation.y = Math.PI / 4;
-    aircraft.add(leftPropeller);
-
-    const rightPropeller = new THREE.Mesh(propellerGeometry, propellerMaterial);
-    rightPropeller.position.set(6, -0.6, 0);
-    rightPropeller.rotation.y = Math.PI / 4;
-    aircraft.add(rightPropeller);
-
-    // الأجنحة الثانوية (Horizontal Stabilizer) - ذيل أفقي
-    const tailWingGeometry = new THREE.BoxGeometry(7.5, 0.25, 2.5);
-    const tailWingMaterial = new THREE.MeshStandardMaterial({
-        color: 0xd9d9d9,
-        metalness: 0.25,
-        roughness: 0.4
-    });
-    const tailWing = new THREE.Mesh(tailWingGeometry, tailWingMaterial);
-    tailWing.position.set(0, 0.15, -8);
     aircraft.add(tailWing);
 
-    // الذيل الرأسي (Vertical Tail/Rudder) - أطول
-    const verticalTailGeometry = new THREE.BoxGeometry(0.5, 2.5, 1.8);
-    const verticalTailMaterial = new THREE.MeshStandardMaterial({
-        color: 0xff4444,
-        metalness: 0.25,
-        roughness: 0.4
-    });
-    const verticalTail = new THREE.Mesh(verticalTailGeometry, verticalTailMaterial);
-    verticalTail.position.set(0, 1.4, -8);
+    const verticalTail = new THREE.Mesh(
+        new THREE.BoxGeometry(
+            0.5,
+            2.5,
+            1.5
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xff4444
+        })
+    );
+
+    verticalTail.position.set(
+        0,
+        1.4,
+        -8
+    );
+
     aircraft.add(verticalTail);
 
-    // خطوط الديكور على الذيل
-    const tailStripeGeometry = new THREE.BoxGeometry(0.35, 0.4, 1.3);
-    const tailStripeMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffffff
-    });
-    const tailStripe = new THREE.Mesh(tailStripeGeometry, tailStripeMaterial);
-    tailStripe.position.set(0, 0.9, -8);
-    aircraft.add(tailStripe);
+    const leftEngine = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+            0.45,
+            0.45,
+            2.5,
+            16
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x444444
+        })
+    );
 
-    // عجلات الهبوط (Landing Gear) - الرئيسية
-    const wheelGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.25, 16, 8);
-    const wheelMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1a1a1a,
-        metalness: 0.5,
-        roughness: 0.7
-    });
+    leftEngine.rotation.z =
+    Math.PI / 2;
 
-    // عجلات أمامية
-    const frontLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-    frontLeftWheel.rotation.z = Math.PI / 2;
-    frontLeftWheel.position.set(-2.5, -0.6, 2);
-    aircraft.add(frontLeftWheel);
+    leftEngine.position.set(
+        -6,
+        -0.6,
+        0
+    );
 
-    const frontRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-    frontRightWheel.rotation.z = Math.PI / 2;
-    frontRightWheel.position.set(2.5, -0.6, 2);
-    aircraft.add(frontRightWheel);
+    aircraft.add(leftEngine);
 
-    // عجلات خلفية
-    const backLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-    backLeftWheel.rotation.z = Math.PI / 2;
-    backLeftWheel.position.set(-2.5, -0.6, -3);
-    aircraft.add(backLeftWheel);
+    const rightEngine =
+    leftEngine.clone();
 
-    const backRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-    backRightWheel.rotation.z = Math.PI / 2;
-    backRightWheel.position.set(2.5, -0.6, -3);
-    aircraft.add(backRightWheel);
+    rightEngine.position.x = 6;
 
-    // أماميات العجلات (Struts)
-    const strutGeometry = new THREE.BoxGeometry(0.12, 1.3, 0.12);
-    const strutMaterial = new THREE.MeshStandardMaterial({
-        color: 0x2a2a2a,
-        metalness: 0.6
-    });
-
-    const frontLeftStrut = new THREE.Mesh(strutGeometry, strutMaterial);
-    frontLeftStrut.position.set(-2.5, -0.15, 2);
-    aircraft.add(frontLeftStrut);
-
-    const frontRightStrut = new THREE.Mesh(strutGeometry, strutMaterial);
-    frontRightStrut.position.set(2.5, -0.15, 2);
-    aircraft.add(frontRightStrut);
-
-    const backLeftStrut = new THREE.Mesh(strutGeometry, strutMaterial);
-    backLeftStrut.position.set(-2.5, -0.15, -3);
-    aircraft.add(backLeftStrut);
-
-    const backRightStrut = new THREE.Mesh(strutGeometry, strutMaterial);
-    backRightStrut.position.set(2.5, -0.15, -3);
-    aircraft.add(backRightStrut);
-
-    // أضواء الملاحة (Navigation Lights)
-    const lightGeometry = new THREE.SphereGeometry(0.2, 8, 8);
-    
-    const redLightMaterial = new THREE.MeshStandardMaterial({
-        color: 0xff0000,
-        emissive: 0xff0000,
-        emissiveIntensity: 0.7
-    });
-    const leftNavLight = new THREE.Mesh(lightGeometry, redLightMaterial);
-    leftNavLight.position.set(-10, 0.15, 0);
-    aircraft.add(leftNavLight);
-
-    const greenLightMaterial = new THREE.MeshStandardMaterial({
-        color: 0x00ff00,
-        emissive: 0x00ff00,
-        emissiveIntensity: 0.7
-    });
-    const rightNavLight = new THREE.Mesh(lightGeometry, greenLightMaterial);
-    rightNavLight.position.set(10, 0.15, 0);
-    aircraft.add(rightNavLight);
-
-    // إضاءة بيضاء في المقدمة
-    const whiteLightMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        emissive: 0xffffff,
-        emissiveIntensity: 0.7
-    });
-    const frontLight = new THREE.Mesh(lightGeometry, whiteLightMaterial);
-    frontLight.position.set(10, -0.25, 0);
-    aircraft.add(frontLight);
+    aircraft.add(rightEngine);
 
     return aircraft;
 }
 
-const aircraft = createRealisticAircraft();
+const aircraft =
+createAircraft();
 
 aircraft.position.set(
 0,
@@ -310,29 +228,34 @@ aircraft.position.set(
 
 scene.add(aircraft);
 
-for(let i = 0; i < 150; i++)
+for(let i = 0; i < 200; i++)
 {
     let x;
     let z;
 
     do
     {
-        x = (Math.random() - 0.5) * 1500;
-        z = (Math.random() - 0.5) * 1500;
-    }
-    while(
-        Math.abs(x) < 120 &&
+        x =
+        (Math.random()-0.5)
+        * 1800;
+
+        z =
+        (Math.random()-0.5)
+        * 1800;
+
+    } while(
+        Math.abs(x) < 150 &&
         Math.abs(z) < 350
     );
 
-    const height =
-    Math.random() * 60 + 10;
+    const h =
+    Math.random()*80+10;
 
     const building =
     new THREE.Mesh(
         new THREE.BoxGeometry(
             10,
-            height,
+            h,
             10
         ),
         new THREE.MeshStandardMaterial({
@@ -342,31 +265,42 @@ for(let i = 0; i < 150; i++)
 
     building.position.set(
         x,
-        height / 2,
+        h/2,
         z
     );
+
+    building.castShadow = true;
 
     scene.add(building);
 }
 
 let speed = 0;
-let altitude = 1;
 let fuel = 100;
+
+let altitude = 1;
+
 let pitch = 0;
+
+let verticalSpeed = 0;
+
+const gravity = 0.003;
+const liftFactor = 0.01;
+
+let dayTime = 0;
 
 const keys = {};
 
 document.addEventListener(
 'keydown',
 (e)=>{
-    keys[e.key] = true;
+    keys[e.key]=true;
 }
 );
 
 document.addEventListener(
 'keyup',
 (e)=>{
-    keys[e.key] = false;
+    keys[e.key]=false;
 }
 );
 
@@ -386,9 +320,13 @@ function animate()
         speed -= 0.0015;
     }
 
-    speed = Math.max(
+    speed =
+    Math.max(
         0,
-        Math.min(1,speed)
+        Math.min(
+            1,
+            speed
+        )
     );
 
     if(keys["ArrowLeft"])
@@ -411,22 +349,35 @@ function animate()
         pitch -= 0.01;
     }
 
-    pitch = Math.max(
+    pitch =
+    Math.max(
         -0.4,
-        Math.min(0.4,pitch)
+        Math.min(
+            0.4,
+            pitch
+        )
     );
 
-    aircraft.rotation.x = pitch;
+    aircraft.rotation.x =
+    pitch;
 
-    altitude +=
-    pitch *
+    const lift =
     speed *
-    3;
+    speed *
+    liftFactor *
+    (1 + pitch);
 
-    altitude = Math.max(
-        1,
-        altitude
-    );
+    verticalSpeed += lift;
+
+    verticalSpeed -= gravity;
+
+    altitude += verticalSpeed;
+
+    if(altitude < 1)
+    {
+        altitude = 1;
+        verticalSpeed = 0;
+    }
 
     aircraft.position.y =
     altitude;
@@ -435,31 +386,65 @@ function animate()
         speed * 2
     );
 
-    if(speed > 0 && fuel > 0)
+    if(speed > 0)
     {
-        fuel -= 0.004;
+        fuel -= speed * 0.02;
     }
 
-    fuel = Math.max(
+    fuel =
+    Math.max(
         0,
         fuel
     );
 
-    camera.position.x =
-    aircraft.position.x;
+    const cameraOffset =
+    new THREE.Vector3(
+        0,
+        8,
+        -25
+    );
 
-    camera.position.y =
-    aircraft.position.y + 8;
+    cameraOffset.applyQuaternion(
+        aircraft.quaternion
+    );
 
-    camera.position.z =
-    aircraft.position.z - 20;
+    camera.position.copy(
+        aircraft.position
+    ).add(
+        cameraOffset
+    );
 
     camera.lookAt(
         aircraft.position
     );
 
+    dayTime += 0.0005;
+
+    sun.position.x =
+    Math.cos(dayTime) * 500;
+
+    sun.position.y =
+    Math.sin(dayTime) * 500;
+
+    if(sun.position.y < 0)
+    {
+        scene.background =
+        new THREE.Color(
+            0x000022
+        );
+    }
+    else
+    {
+        scene.background =
+        new THREE.Color(
+            0x87ceeb
+        );
+    }
+
     const speedElement =
-    document.getElementById("speed");
+    document.getElementById(
+        "speed"
+    );
 
     if(speedElement)
     {
@@ -470,7 +455,9 @@ function animate()
     }
 
     const altitudeElement =
-    document.getElementById("altitude");
+    document.getElementById(
+        "altitude"
+    );
 
     if(altitudeElement)
     {
@@ -481,7 +468,9 @@ function animate()
     }
 
     const fuelElement =
-    document.getElementById("fuel");
+    document.getElementById(
+        "fuel"
+    );
 
     if(fuelElement)
     {

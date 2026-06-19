@@ -1,15 +1,23 @@
 body{
     margin:0;
     overflow:hidden;
-    font-family:Arial;
+    font-family:Arial,sans-serif;
 }
 
 #hud{
     position:absolute;
     top:10px;
     left:10px;
+
     color:white;
-    background:rgba(0,0,0,0.5);
-    padding:10px;
-    border-radius:5px;
+
+    background:rgba(0,0,0,0.6);
+
+    padding:12px;
+
+    border-radius:8px;
+
+    font-size:18px;
+
+    z-index:100;
 }

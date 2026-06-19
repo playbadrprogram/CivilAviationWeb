@@ -23,23 +23,23 @@ document.body.appendChild(
 renderer.domElement
 );
 
-const light = new THREE.DirectionalLight(
+const sun = new THREE.DirectionalLight(
 0xffffff,
 1
 );
 
-light.position.set(
+sun.position.set(
 100,
 200,
 100
 );
 
-scene.add(light);
+scene.add(sun);
 
 scene.add(
 new THREE.AmbientLight(
 0xffffff,
-0.5
+0.6
 )
 );
 
@@ -49,7 +49,7 @@ new THREE.PlaneGeometry(
 5000
 ),
 new THREE.MeshStandardMaterial({
-color: 0x3fa34d
+color: 0x2e7d32
 })
 );
 
@@ -59,12 +59,12 @@ scene.add(ground);
 
 const runway = new THREE.Mesh(
 new THREE.BoxGeometry(
-50,
+60,
 0.1,
-500
+600
 ),
 new THREE.MeshStandardMaterial({
-color: 0x444444
+color: 0x333333
 })
 );
 
@@ -72,7 +72,31 @@ runway.position.y = 0.05;
 
 scene.add(runway);
 
-const aircraft = new THREE.Mesh(
+for(let i = -280; i <= 280; i += 30)
+{
+    const mark = new THREE.Mesh(
+        new THREE.BoxGeometry(
+            3,
+            0.11,
+            15
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xffffff
+        })
+    );
+
+    mark.position.set(
+        0,
+        0.11,
+        i
+    );
+
+    scene.add(mark);
+}
+
+const aircraft = new THREE.Group();
+
+const body = new THREE.Mesh(
 new THREE.BoxGeometry(
 2,
 1,
@@ -82,6 +106,52 @@ new THREE.MeshStandardMaterial({
 color: 0xffffff
 })
 );
+
+const wing = new THREE.Mesh(
+new THREE.BoxGeometry(
+10,
+0.2,
+2
+),
+new THREE.MeshStandardMaterial({
+color: 0xdedede
+})
+);
+
+const tailWing = new THREE.Mesh(
+new THREE.BoxGeometry(
+4,
+0.2,
+1
+),
+new THREE.MeshStandardMaterial({
+color: 0xdedede
+})
+);
+
+tailWing.position.z = -3;
+
+const verticalTail = new THREE.Mesh(
+new THREE.BoxGeometry(
+0.3,
+1.5,
+1
+),
+new THREE.MeshStandardMaterial({
+color: 0xff0000
+})
+);
+
+verticalTail.position.set(
+0,
+0.8,
+-3
+);
+
+aircraft.add(body);
+aircraft.add(wing);
+aircraft.add(tailWing);
+aircraft.add(verticalTail);
 
 aircraft.position.set(
 0,
@@ -93,19 +163,21 @@ scene.add(aircraft);
 
 for(let i = 0; i < 150; i++)
 {
-    let x,z;
+    let x;
+    let z;
 
-    do{
-        x = (Math.random()-0.5)*1500;
-        z = (Math.random()-0.5)*1500;
+    do
+    {
+        x = (Math.random() - 0.5) * 1500;
+        z = (Math.random() - 0.5) * 1500;
     }
     while(
-        Math.abs(x) < 100 &&
-        Math.abs(z) < 300
+        Math.abs(x) < 120 &&
+        Math.abs(z) < 350
     );
 
     const height =
-    Math.random()*60 + 5;
+    Math.random() * 60 + 10;
 
     const building =
     new THREE.Mesh(
@@ -115,13 +187,13 @@ for(let i = 0; i < 150; i++)
             10
         ),
         new THREE.MeshStandardMaterial({
-            color:0x888888
+            color: 0x666666
         })
     );
 
     building.position.set(
         x,
-        height/2,
+        height / 2,
         z
     );
 
@@ -131,7 +203,6 @@ for(let i = 0; i < 150; i++)
 let speed = 0;
 let altitude = 1;
 let fuel = 100;
-
 let pitch = 0;
 
 const keys = {};
@@ -158,12 +229,12 @@ function animate()
 
     if(keys["ArrowUp"] && fuel > 0)
     {
-        speed += 0.001;
+        speed += 0.0015;
     }
 
     if(keys["ArrowDown"])
     {
-        speed -= 0.001;
+        speed -= 0.0015;
     }
 
     speed = Math.max(
@@ -192,8 +263,8 @@ function animate()
     }
 
     pitch = Math.max(
-        -0.5,
-        Math.min(0.5,pitch)
+        -0.4,
+        Math.min(0.4,pitch)
     );
 
     aircraft.rotation.x = pitch;
@@ -201,7 +272,7 @@ function animate()
     altitude +=
     pitch *
     speed *
-    2;
+    3;
 
     altitude = Math.max(
         1,
@@ -217,7 +288,7 @@ function animate()
 
     if(speed > 0 && fuel > 0)
     {
-        fuel -= 0.005;
+        fuel -= 0.004;
     }
 
     fuel = Math.max(
@@ -238,26 +309,38 @@ function animate()
         aircraft.position
     );
 
-    document.getElementById(
-        "speed"
-    ).innerText =
-    Math.round(
-        speed * 1000
-    );
+    const speedElement =
+    document.getElementById("speed");
 
-    document.getElementById(
-        "altitude"
-    ).innerText =
-    Math.round(
-        altitude
-    );
+    if(speedElement)
+    {
+        speedElement.innerText =
+        Math.round(
+            speed * 1000
+        );
+    }
 
-    document.getElementById(
-        "fuel"
-    ).innerText =
-    Math.round(
-        fuel
-    );
+    const altitudeElement =
+    document.getElementById("altitude");
+
+    if(altitudeElement)
+    {
+        altitudeElement.innerText =
+        Math.round(
+            altitude
+        );
+    }
+
+    const fuelElement =
+    document.getElementById("fuel");
+
+    if(fuelElement)
+    {
+        fuelElement.innerText =
+        Math.round(
+            fuel
+        );
+    }
 
     renderer.render(
         scene,

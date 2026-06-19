@@ -93,8 +93,19 @@ scene.add(aircraft);
 
 for(let i = 0; i < 150; i++)
 {
+    let x,z;
+
+    do{
+        x = (Math.random()-0.5)*1500;
+        z = (Math.random()-0.5)*1500;
+    }
+    while(
+        Math.abs(x) < 100 &&
+        Math.abs(z) < 300
+    );
+
     const height =
-    Math.random() * 60 + 5;
+    Math.random()*60 + 5;
 
     const building =
     new THREE.Mesh(
@@ -104,14 +115,14 @@ for(let i = 0; i < 150; i++)
             10
         ),
         new THREE.MeshStandardMaterial({
-            color: 0x888888
+            color:0x888888
         })
     );
 
     building.position.set(
-        (Math.random() - 0.5) * 1500,
-        height / 2,
-        (Math.random() - 0.5) * 1500
+        x,
+        height/2,
+        z
     );
 
     scene.add(building);

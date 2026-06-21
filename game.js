@@ -442,6 +442,10 @@ function animate()
     }
 
     const speedElement =
+        document.getElementById(
+"acceleration"
+).innerText =
+acceleration.toFixed(1);
     document.getElementById(
         "speed"
     );

@@ -78,6 +78,26 @@ runway.receiveShadow = true;
 
 scene.add(runway);
 
+const runway2 =
+new THREE.Mesh(
+new THREE.BoxGeometry(
+60,
+0.1,
+600
+),
+new THREE.MeshStandardMaterial({
+color:0x222222
+})
+);
+
+runway2.position.set(
+1200,
+0.05,
+1500
+);
+
+scene.add(runway2);
+
 for(let i = -280; i <= 280; i += 30)
 {
     const mark = new THREE.Mesh(

@@ -487,6 +487,8 @@ function animate()
 }
 
 animate();
+let acceleration = 0;
+let previousSpeed = 0;
 
 window.addEventListener(
 'resize',

@@ -489,6 +489,10 @@ function animate()
 animate();
 let acceleration = 0;
 let previousSpeed = 0;
+acceleration =
+(speed - previousSpeed) * 1000;
+
+previousSpeed = speed;
 
 window.addEventListener(
 'resize',

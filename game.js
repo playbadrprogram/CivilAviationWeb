@@ -294,6 +294,7 @@ for(let i = 0; i < 200; i++)
     scene.add(building);
 }
 
+let money = 10000;
 let speed = 0;
 let fuel = 100;
 
@@ -325,6 +326,20 @@ document.addEventListener(
 );
 
 function animate()
+
+    const distance =
+aircraft.position.distanceTo(
+runway2.position
+);
+
+if(
+distance < 100 &&
+altitude < 5 &&
+speed < 0.15
+)
+{
+money += 5000;
+}
 {
     requestAnimationFrame(
         animate
@@ -494,6 +509,27 @@ acceleration.toFixed(1);
     const fuelElement =
     document.getElementById(
         "fuel"
+        const fuelStation =
+new THREE.Mesh(
+new THREE.BoxGeometry(
+15,
+8,
+15
+),
+new THREE.MeshStandardMaterial({
+color:0xffcc00
+})
+);
+
+fuelStation.position.set(
+80,
+4,
+-250
+);
+
+scene.add(
+fuelStation
+);
     );
 
     if(fuelElement)
@@ -511,6 +547,18 @@ acceleration.toFixed(1);
 }
 
 animate();
+const fuelDistance =
+aircraft.position.distanceTo(
+fuelStation.position
+);
+
+if(
+fuelDistance < 20 &&
+speed < 0.05
+)
+{
+fuel = 100;
+}
 let acceleration = 0;
 let previousSpeed = 0;
 acceleration =

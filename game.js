@@ -120,6 +120,15 @@ z:1800
 }
 ];
 
+
+
+let currentAirport = "Sanaa";
+let targetAirport = "Aden";
+
+let missionReward = 5000;
+
+let landingRewardGiven = false;
+
 function createAirport(x,z)
 {
 const airportRunway =
@@ -442,10 +451,59 @@ document.addEventListener(
 e=>keys[e.key]=false
 );
 
+function getHeading()
+{
+    let angle =
+    aircraft.rotation.y *
+    180 / Math.PI;
 
+    angle =
+    (angle % 360 + 360) % 360;
+
+    if(angle < 22.5) return "N";
+    if(angle < 67.5) return "NE";
+    if(angle < 112.5) return "E";
+    if(angle < 157.5) return "SE";
+    if(angle < 202.5) return "S";
+    if(angle < 247.5) return "SW";
+    if(angle < 292.5) return "W";
+    if(angle < 337.5) return "NW";
+
+    return "N";
+}
 
 function animate()
 {
+
+    const distanceElement =
+document.getElementById(
+"distance"
+);
+
+if(distanceElement)
+{
+    distanceElement.innerText =
+    Math.round(
+        missionDistance
+    );
+}
+
+    const headingElement =
+document.getElementById(
+"heading"
+);
+
+if(headingElement)
+{
+    headingElement.innerText =
+    getHeading();
+}،
+
+    const missionDistance =
+aircraft.position.distanceTo(
+adenAirport.position
+);
+    
     requestAnimationFrame(
         animate
     );
@@ -564,11 +622,23 @@ if(moneyElement)
         airportDistance < 100 &&
         altitude < 5 &&
         speed < 0.15
-    )
-    {
-        money += 100;
-    }
+!landingRewardGiven
+)
+{
+    money += missionReward;
 
+    landingRewardGiven = true;
+
+    alert(
+        "تم الوصول إلى مطار عدن بنجاح!"
+    );
+}
+    
+if(altitude > 20)
+{
+    landingRewardGiven = false;
+}
+    
     const cameraOffset =
     new THREE.Vector3(
         0,

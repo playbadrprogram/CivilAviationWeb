@@ -96,6 +96,123 @@ i
 scene.add(mark);
 }
 
+
+
+// =========================
+// AIRPORTS SYSTEM V5
+// =========================
+
+const airports = [
+{
+name:"Sanaa",
+x:0,
+z:0
+},
+{
+name:"Aden",
+x:1200,
+z:1500
+},
+{
+name:"Mukalla",
+x:-1400,
+z:1800
+}
+];
+
+function createAirport(x,z)
+{
+const airportRunway =
+new THREE.Mesh(
+new THREE.BoxGeometry(
+80,
+0.1,
+700
+),
+new THREE.MeshStandardMaterial({
+color:0x222222
+})
+);
+
+airportRunway.position.set(
+x,
+0.05,
+z
+);
+
+scene.add(
+airportRunway
+);
+
+return airportRunway;
+}
+
+const adenAirport =
+createAirport(
+1200,
+1500
+);
+
+const mukallaAirport =
+createAirport(
+-1400,
+1800
+);
+
+// =========================
+// FUEL STATION
+// =========================
+
+const fuelStation =
+new THREE.Mesh(
+new THREE.BoxGeometry(
+20,
+12,
+20
+),
+new THREE.MeshStandardMaterial({
+color:0xffcc00
+})
+);
+
+fuelStation.position.set(
+100,
+6,
+-250
+);
+
+scene.add(
+fuelStation
+);
+
+// =========================
+// CLOUDS
+// =========================
+
+for(let i=0;i<50;i++)
+{
+const cloud =
+new THREE.Mesh(
+new THREE.SphereGeometry(
+20,
+16,
+16
+),
+new THREE.MeshStandardMaterial({
+color:0xffffff
+})
+);
+
+cloud.position.set(
+(Math.random()-0.5)*4000,
+120+Math.random()*100,
+(Math.random()-0.5)*4000
+);
+
+scene.add(
+cloud
+);
+}
 const runway2 = new THREE.Mesh(
 new THREE.BoxGeometry(
 60,

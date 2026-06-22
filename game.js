@@ -465,8 +465,8 @@ function animate()
     const cameraOffset =
     new THREE.Vector3(
         0,
-        8,
-        -25
+        15,
+        -40
     );
 
     cameraOffset.applyQuaternion(

@@ -1,7 +1,3 @@
-console.log("GAME STARTED");
-window.onerror = function(msg){
-    alert(msg);
-};
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
 const scene = new THREE.Scene();
@@ -308,7 +304,7 @@ let pitch = 0;
 
 let verticalSpeed = 0;
 
-const gravity = 0.003;
+const gravity. = 0.003;
 const liftFactor = 0.01;
 
 let dayTime = 0;
@@ -330,11 +326,24 @@ document.addEventListener(
 );
 
 function animate()
-
+{
     const distance =
-aircraft.position.distanceTo(
-runway2.position
-);
+    aircraft.position.distanceTo(
+        runway2.position
+    );
+
+    if(
+        distance < 100 &&
+        altitude < 5 &&
+        speed < 0.15
+    )
+    {
+        money += 5000;
+    }
+
+    requestAnimationFrame(
+        animate
+    );،،
 
 if(
 distance < 100 &&
@@ -480,14 +489,21 @@ money += 5000;
         );
     }
 
-    const speedElement =
-        document.getElementById(
+    const accelerationElement =
+document.getElementById(
 "acceleration"
-).innerText =
-acceleration.toFixed(1);
-    document.getElementById(
-        "speed"
-    );
+);
+
+if(accelerationElement)
+{
+    accelerationElement.innerText =
+    acceleration.toFixed(1);
+}
+
+const speedElement =
+document.getElementById(
+"speed"
+);
 
     if(speedElement)
     {
@@ -510,11 +526,7 @@ acceleration.toFixed(1);
         );
     }
 
-    const fuelElement =
-    document.getElementById(
-        "fuel"
-        const fuelStation =
-new THREE.Mesh(
+ 
 new THREE.BoxGeometry(
 15,
 8,
@@ -549,9 +561,38 @@ fuelStation
         camera
     );
 }
+    
+const fuelStation =
+new THREE.Mesh(
+    new THREE.BoxGeometry(
+        15,
+        8,
+        15
+    ),
+    new THREE.MeshStandardMaterial({
+        color:0xffcc00
+    })
+);
 
+fuelStation.position.set(
+    80,
+    4,
+    -250
+);
+
+scene.add(
+    fuelStation
+);
+    
 animate();
-const fuelDistance =
+let acceleration = 0;
+let previousSpeed = 0;
+    acceleration =
+(speed - previousSpeed) * 1000;
+
+previousSpeed = speed;
+    
+fuelDistance =
 aircraft.position.distanceTo(
 fuelStation.position
 );
@@ -563,8 +604,7 @@ speed < 0.05
 {
 fuel = 100;
 }
-let acceleration = 0;
-let previousSpeed = 0;
+
 acceleration =
 (speed - previousSpeed) * 1000;
 

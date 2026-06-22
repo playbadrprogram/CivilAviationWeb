@@ -414,27 +414,6 @@ building.castShadow = true;
 scene.add(building);
 }
 
-const fuelStation =
-new THREE.Mesh(
-new THREE.BoxGeometry(
-20,
-10,
-20
-),
-new THREE.MeshStandardMaterial({
-color:0xffcc00
-})
-);
-
-fuelStation.position.set(
-80,
-5,
--250
-);
-
-scene.add(
-fuelStation
-);
 
 let money = 10000;
 let speed = 0;
@@ -564,6 +543,17 @@ function animate()
     {
         fuel = 100;
     }
+
+    const moneyElement =
+document.getElementById(
+"money"
+);
+
+if(moneyElement)
+{
+    moneyElement.innerText =
+    Math.round(money);
+}
 
     const airportDistance =
     aircraft.position.distanceTo(

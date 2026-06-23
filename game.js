@@ -659,7 +659,7 @@ direction.applyQuaternion(aircraft.quaternion);
 
 aircraft.position.addScaledVector(direction, speed * 10);
 
-,
+
     );
 
     // FUEL

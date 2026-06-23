@@ -570,12 +570,12 @@ function animate()
         fuel > 0
     )
     {
-        speed += 0.01،;
+        speed += 0.02;
     }
 
     if(keys["ArrowDown"])
     {
-        speed -= 0.02;
+        speed -= 0.01;
     }
 
     speed =
@@ -659,8 +659,7 @@ direction.applyQuaternion(aircraft.quaternion);
 
 aircraft.position.addScaledVector(direction, speed * 10);
 
-    aircraft.translateZ(
-        speed * 10
+,
     );
 
     // FUEL

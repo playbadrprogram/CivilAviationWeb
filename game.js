@@ -457,7 +457,7 @@ i++
 
 let money = 10000;
 
-let speed = 0;
+let speed = 0.2;
 
 let fuel = 100;
 
@@ -570,12 +570,12 @@ function animate()
         fuel > 0
     )
     {
-        speed += 0.0015;
+        speed += 0.01،;
     }
 
     if(keys["ArrowDown"])
     {
-        speed -= 0.0015;
+        speed -= 0.02;
     }
 
     speed =
@@ -654,11 +654,13 @@ function animate()
         verticalSpeed = 0;
     }
 
-    aircraft.position.y =
-    altitude;
+    const direction = new THREE.Vector3(0, 0, -1);
+direction.applyQuaternion(aircraft.quaternion);
+
+aircraft.position.addScaledVector(direction, speed * 10);
 
     aircraft.translateZ(
-        speed * 2
+        speed * 10
     );
 
     // FUEL
